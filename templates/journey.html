@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VetPath Journey — Discover Your Business Path | VR&E Self-Employment</title>
+  <meta name="description" content="AI-guided discovery: find the right business for you based on your disability, location, and goals.">
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Merriweather:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #0f2240;
+      --navy-mid: #1a3a6b;
+      --navy-light: #1e4480;
+      --gold: #d4a853;
+      --gold-light: #f0c96e;
+      --gold-dim: #8a6a2e;
+      --bg: #f5f7fa;
+      --surface: #ffffff;
+      --surface2: #eef1f7;
+      --text: #1a1a2e;
+      --muted: #5a6478;
+      --border: #dde3ed;
+      --green: #1a7a4a;
+      --green-light: #e8f5ee;
+      --amber: #b45309;
+      --amber-light: #fef3c7;
+      --red: #dc2626;
+      --red-light: #fee2e2;
+      --radius: 14px;
+      --shadow: 0 2px 8px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+      --font: 'Inter', system-ui, sans-serif;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── HEADER ───────────────────────────────── */
+    .journey-header {
+      background: var(--navy);
+      padding: 16px 24px;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    }
+    .journey-header-inner {
+      max-width: 800px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .journey-brand {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none; color: #fff;
+    }
+    .journey-brand-name {
+      font-size: 18px; font-weight: 800; color: #fff;
+    }
+    .journey-brand-name span { color: var(--gold); }
+
+    .progress-bar-wrap {
+      flex: 1; max-width: 260px; margin: 0 24px;
+    }
+    .progress-label {
+      font-size: 11px; color: rgba(255,255,255,0.5);
+      text-transform: uppercase; letter-spacing: 0.07em;
+      margin-bottom: 6px; text-align: center;
+    }
+    .progress-track {
+      height: 4px; background: rgba(255,255,255,0.15);
+      border-radius: 2px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; background: var(--gold);
+      border-radius: 2px;
+      transition: width 0.5s ease;
+    }
+
+    .stage-label {
+      font-size: 12px; font-weight: 700;
+      color: var(--gold); background: rgba(212,168,83,0.12);
+      border: 1px solid rgba(212,168,83,0.3);
+      padding: 4px 12px; border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    /* ─── MAIN CONTENT ────────────────────────────── */
+    .journey-main {
+      flex: 1; max-width: 800px; margin: 0 auto;
+      width: 100%; padding: 32px 24px 120px;
+    }
+
+    /* ─── CONVERSATION ──────────────────────────── */
+    .conversation {
+      display: flex; flex-direction: column; gap: 24px;
+    }
+
+    .message {
+      display: flex; gap: 12px; align-items: flex-start;
+      animation: msgIn 0.4s ease both;
+    }
+    @keyframes msgIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .message.user { flex-direction: row-reverse; }
+    .message-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-size: 16px;
+    }
+    .message.ai .message-avatar { background: var(--navy); }
+    .message.user .message-avatar { background: var(--gold); }
+    .message-bubble {
+      max-width: 75%;
+      padding: 14px 18px;
+      border-radius: var(--radius);
+      font-size: 15px; line-height: 1.65;
+      box-shadow: var(--shadow);
+    }
+    .message.ai .message-bubble {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
+    }
+    .message.user .message-bubble {
+      background: var(--navy);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    .message-bubble p { margin-bottom: 10px; }
+    .message-bubble p:last-child { margin-bottom: 0; }
+
+    /* ─── CONCEPTS GRID ─────────────────────────── */
+    .concepts-section { margin-top: 8px; }
+    .concepts-intro {
+      font-size: 15px; color: var(--muted);
+      margin-bottom: 20px; line-height: 1.6;
+    }
+    .concepts-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .concept-card {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+    .concept-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+    .concept-card.selected {
+      border-color: var(--green);
+      background: var(--green-light);
+    }
+    .concept-name {
+      font-size: 16px; font-weight: 700; color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .concept-why {
+      font-size: 13px; color: var(--muted); line-height: 1.55;
+      margin-bottom: 12px;
+    }
+    .concept-meta {
+      display: flex; gap: 12px; flex-wrap: wrap;
+    }
+    .concept-tag {
+      font-size: 11px; font-weight: 600;
+      padding: 3px 8px; border-radius: 6px;
+    }
+    .concept-tag.cost { background: var(--surface2); color: var(--muted); }
+    .concept-tag.revenue { background: var(--green-light); color: var(--green); }
+    .concept-tag.risk { background: var(--amber-light); color: var(--amber); }
+    .concept-select-btn {
+      margin-top: 12px; width: 100%;
+      background: var(--navy); color: #fff;
+      border: none; border-radius: 8px;
+      padding: 10px; font-size: 13px; font-weight: 700;
+      cursor: pointer; font-family: inherit;
+      display: none;
+    }
+    .concept-card.selected .concept-select-btn { display: block; background: var(--green); }
+    .concept-card:not(.selected) .concept-select-btn { display: block; background: var(--navy); }
+
+    /* ─── VALIDATION RESULT ──────────────────────── */
+    .validation-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-top: 8px;
+      animation: msgIn 0.4s ease both;
+    }
+    .verdict-banner {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 20px;
+      padding: 16px 20px;
+      border-radius: 10px;
+    }
+    .verdict-banner.viable { background: var(--green-light); border: 1px solid #86efac; }
+    .verdict-banner.needs-work { background: var(--amber-light); border: 1px solid #fcd34d; }
+    .verdict-banner.unlikely { background: var(--red-light); border: 1px solid #fca5a5; }
+    .verdict-icon { font-size: 28px; }
+    .verdict-text h3 { font-size: 18px; font-weight: 800; margin-bottom: 2px; }
+    .verdict-text p { font-size: 13px; color: var(--muted); }
+    .verdict-banner.viable .verdict-text h3 { color: var(--green); }
+    .verdict-banner.needs-work .verdict-text h3 { color: var(--amber); }
+    .verdict-banner.unlikely .verdict-text h3 { color: var(--red); }
+
+    .analysis-section { margin-bottom: 16px; }
+    .analysis-section h4 {
+      font-size: 12px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.07em;
+      color: var(--muted); margin-bottom: 8px;
+    }
+    .strength-list, .weakness-list {
+      list-style: none; display: flex; flex-direction: column; gap: 6px;
+    }
+    .strength-list li, .weakness-list li {
+      font-size: 14px; padding: 6px 12px;
+      border-radius: 6px; display: flex; gap: 8px; align-items: flex-start;
+    }
+    .strength-list li { background: var(--green-light); color: var(--green); }
+    .weakness-list li { background: var(--red-light); color: var(--red); }
+    .risk-item {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 12px 16px; margin-bottom: 8px;
+    }
+    .risk-item h5 { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+    .risk-item p { font-size: 12px; color: var(--muted); }
+
+    /* ─── PLAN DISPLAY ──────────────────────────── */
+    .plan-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      margin-top: 8px;
+    }
+    .plan-panel h2 {
+      font-family: 'Merriweather', Georgia, serif;
+      font-size: 22px; color: var(--navy); margin-bottom: 8px;
+    }
+    .plan-panel .plan-subtitle {
+      font-size: 14px; color: var(--muted); margin-bottom: 28px;
+    }
+    .plan-section {
+      margin-bottom: 28px;
+    }
+    .plan-section h3 {
+      font-size: 15px; font-weight: 700; color: var(--navy);
+      padding-bottom: 6px; border-bottom: 2px solid var(--navy);
+      margin-bottom: 12px;
+    }
+    .plan-section p, .plan-section li {
+      font-size: 14px; color: var(--text); line-height: 1.7;
+    }
+    .plan-section ul { padding-left: 20px; }
+    .plan-section li { margin-bottom: 4px; }
+    .plan-section .declaration {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px; padding: 20px;
+      font-size: 13px; color: var(--muted);
+      font-style: italic;
+    }
+    .plan-download {
+      margin-top: 28px;
+      display: flex; gap: 12px; flex-wrap: wrap;
+    }
+    .btn-download {
+      background: var(--gold); color: var(--navy);
+      border: none; border-radius: 10px;
+      padding: 14px 28px; font-size: 14px; font-weight: 800;
+      cursor: pointer; font-family: inherit;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-upgrade {
+      background: var(--navy); color: #fff;
+      border: none; border-radius: 10px;
+      padding: 14px 24px; font-size: 14px; font-weight: 700;
+      cursor: pointer; font-family: inherit;
+    }
+
+    /* ─── INPUT AREA ────────────────────────────── */
+    .input-area {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 16px 24px;
+      box-shadow: 0 -4px 16px rgba(0,0,0,0.06);
+      z-index: 90;
+    }
+    .input-area-inner {
+      max-width: 800px; margin: 0 auto;
+      display: flex; gap: 12px; align-items: flex-end;
+    }
+    .input-wrapper {
+      flex: 1; position: relative;
+    }
+    textarea {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 15px; font-family: var(--font);
+      color: var(--text);
+      resize: none;
+      outline: none;
+      min-height: 52px; max-height: 160px;
+      transition: border-color 0.2s;
+    }
+    textarea:focus { border-color: var(--gold); }
+    textarea::placeholder { color: #999; }
+
+    .send-btn {
+      width: 52px; height: 52px;
+      background: var(--navy); color: #fff;
+      border: none; border-radius: 12px;
+      cursor: pointer; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .send-btn:hover { background: var(--navy-mid); }
+    .send-btn:disabled { background: var(--border); cursor: not-allowed; }
+
+    .thinking-dots {
+      display: flex; gap: 5px; align-items: center;
+      padding: 14px 0;
+    }
+    .thinking-dots span {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--muted);
+      animation: bounce 1.2s infinite;
+    }
+    .thinking-dots span:nth-child(2) { animation-delay: 0.15s; }
+    .thinking-dots span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+      40% { transform: scale(1.1); opacity: 1; }
+    }
+
+    /* ─── CONCEPT SELECTION ─────────────────────── */
+    .concept-action {
+      margin-top: 20px; display: flex; gap: 12px; flex-wrap: wrap;
+      justify-content: center;
+    }
+    .btn-validate, .btn-refine, .btn-back {
+      padding: 12px 24px; border-radius: 10px;
+      font-size: 14px; font-weight: 700;
+      cursor: pointer; font-family: inherit;
+      border: none; transition: opacity 0.2s;
+    }
+    .btn-validate { background: var(--navy); color: #fff; }
+    .btn-refine { background: var(--surface); color: var(--navy); border: 1px solid var(--border); }
+    .btn-back { background: transparent; color: var(--muted); border: none; font-size: 13px; }
+    .btn-validate:hover, .btn-refine:hover { opacity: 0.88; }
+    .btn-validate:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ─── STAGE TRANSITIONS ────────────────────── */
+    .stage-divider {
+      display: flex; align-items: center; gap: 16px;
+      margin: 8px 0 24px;
+    }
+    .stage-divider-line { flex: 1; height: 1px; background: var(--border); }
+    .stage-divider-badge {
+      font-size: 11px; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--gold); background: rgba(212,168,83,0.1);
+      padding: 4px 14px; border-radius: 20px;
+      border: 1px solid rgba(212,168,83,0.3);
+    }
+
+    /* ─── MOBILE TWEAKS ─────────────────────────── */
+    @media (max-width: 480px) {
+      .message-bubble { max-width: 88%; }
+      .concepts-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ─── ERROR ─────────────────────────────────── */
+    .error-banner {
+      background: var(--red-light); border: 1px solid #fca5a5;
+      border-radius: 10px; padding: 14px 18px;
+      font-size: 14px; color: var(--red);
+      margin-bottom: 16px;
+    }
+
+    /* ─── CTA BANNER ────────────────────────────── */
+    .cta-banner {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      margin-top: 16px;
+      text-align: center;
+      color: #fff;
+    }
+    .cta-banner h3 { font-size: 17px; margin-bottom: 6px; }
+    .cta-banner p { font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 16px; }
+    .cta-banner button {
+      background: var(--gold); color: var(--navy);
+      border: none; border-radius: 10px;
+      padding: 12px 28px; font-size: 14px; font-weight: 800;
+      cursor: pointer; font-family: inherit;
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="journey-header">
+  <div class="journey-header-inner">
+    <a href="/" class="journey-brand">
+      <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
+        <rect width="28" height="28" rx="7" fill="#d4a853"/>
+        <path d="M8 14l4 4 8-8" stroke="#0f2240" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="journey-brand-name">Vet<span>Path</span></span>
+    </a>
+    <div class="progress-bar-wrap">
+      <div class="progress-label" id="progressLabel">Discovery — Question 1</div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width:10%"></div>
+      </div>
+    </div>
+    <div class="stage-label" id="stageBadge">Stage 1</div>
+  </div>
+</header>
+
+<!-- MAIN CHAT AREA -->
+<main class="journey-main">
+  <div class="conversation" id="conversation"></div>
+
+  <!-- Concept Picker (shown after concepts are generated) -->
+  <div id="conceptsArea" style="display:none">
+    <div class="concepts-section">
+      <div class="concepts-intro">
+        Based on your answers, here are <strong id="conceptsCount">0</strong> business concepts matched to your profile. Click one to learn more, or tell me to refine these.
+      </div>
+      <div class="concepts-grid" id="conceptsGrid"></div>
+      <div class="concept-action">
+        <button class="btn-back" onclick="askRefinement()">✨ Refine these concepts</button>
+        <button class="btn-validate" id="btnValidate" onclick="validateConcept()" disabled>🔍 Analyze Viability</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Validation Result -->
+  <div id="validationArea" style="display:none"></div>
+
+  <!-- Plan Display -->
+  <div id="planArea" style="display:none"></div>
+
+  <!-- CTA Banner (for plan area) -->
+  <div class="cta-banner" id="upgradeBanner" style="display:none">
+    <h3>📋 Get Your Full Business Plan</h3>
+    <p>Generate a complete CFR § 21.257-compliant business plan — ready to submit to your VRC.</p>
+    <button onclick="generatePlan()">Generate Full Plan — $29/mo</button>
+  </div>
+</main>
+
+<!-- INPUT AREA -->
+<div class="input-area" id="inputArea">
+  <div class="input-area-inner">
+    <div class="input-wrapper">
+      <textarea
+        id="userInput"
+        placeholder="Type your answer here..."
+        rows="1"
+        onkeydown="handleKeyDown(event)"
+      ></textarea>
+    </div>
+    <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+// ─── State ────────────────────────────────────────────────────────────────────
+const conversationEl = document.getElementById('conversation');
+const conceptsArea = document.getElementById('conceptsArea');
+const validationArea = document.getElementById('validationArea');
+const planArea = document.getElementById('planArea');
+const upgradeBanner = document.getElementById('upgradeBanner');
+const inputArea = document.getElementById('inputArea');
+const userInput = document.getElementById('userInput');
+const progressLabel = document.getElementById('progressLabel');
+const progressFill = document.getElementById('progressFill');
+const stageBadge = document.getElementById('stageBadge');
+
+let stage = 'discovery'; // discovery | concepts | validation | plan
+let messages = []; // conversation history
+let collected = {}; // veteran profile data
+let concepts = [];
+let selectedConceptIndex = null;
+let validationResult = null;
+let planText = null;
+let isGenerating = false;
+
+// ─── Progress ─────────────────────────────────────────────────────────────────
+function setProgress(label, pct, stageLabel) {
+  progressLabel.textContent = label;
+  progressFill.style.width = pct + '%';
+  if (stageLabel) stageBadge.textContent = stageLabel;
+}
+
+// ─── Message Helpers ────────────────────────────────────────────────────────────
+function addMessage(role, content) {
+  messages.push({ role, content });
+  const div = document.createElement('div');
+  div.className = `message ${role}`;
+  const avatar = role === 'ai'
+    ? '<div class="message-avatar">🤖</div>'
+    : '<div class="message-avatar">👤</div>';
+  const bubble = `<div class="message-bubble"><p>${escapeHtml(content)}</p></div>`;
+  div.innerHTML = avatar + bubble;
+  conversationEl.appendChild(div);
+  scrollToBottom();
+}
+
+function addThinkingMessage() {
+  const div = document.createElement('div');
+  div.className = 'message ai';
+  div.id = 'thinkingMsg';
+  div.innerHTML = `<div class="message-avatar">🤖</div>
+    <div class="message-bubble">
+      <div class="thinking-dots">
+        <span></span><span></span><span></span>
+      </div>
+    </div>`;
+  conversationEl.appendChild(div);
+  scrollToBottom();
+}
+
+function removeThinkingMessage() {
+  const el = document.getElementById('thinkingMsg');
+  if (el) el.remove();
+}
+
+function scrollToBottom() {
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+
+function escapeHtml(text) {
+  const d = document.createElement('div');
+  d.textContent = text;
+  return d.innerHTML;
+}
+
+// ─── Render Concepts ───────────────────────────────────────────────────────────
+function renderConcepts(list) {
+  concepts = list;
+  selectedConceptIndex = null;
+  document.getElementById('conceptsCount').textContent = list.length;
+  const grid = document.getElementById('conceptsGrid');
+  grid.innerHTML = '';
+
+  list.forEach((c, i) => {
+    const card = document.createElement('div');
+    card.className = 'concept-card';
+    card.id = `concept-${i}`;
+    card.innerHTML = `
+      <div class="concept-name">${escapeHtml(c.name)}</div>
+      <div class="concept-why">${escapeHtml(c.why_fits)}</div>
+      <div class="concept-meta">
+        <span class="concept-tag cost">💰 ${escapeHtml(c.startup_cost || 'TBD')}</span>
+        <span class="concept-tag revenue">📈 ${escapeHtml(c.monthly_revenue || 'TBD')}</span>
+        ${c.vre_risks ? `<span class="concept-tag risk">⚠️ See risks</span>` : ''}
+      </div>
+      <button class="concept-select-btn" onclick="selectConcept(${i})">${c.vre_risks ? 'Select & Review Risks' : 'Select This Concept'}</button>
+    `;
+    card.onclick = (e) => { if (e.target.tagName !== 'BUTTON') selectConcept(i); };
+    grid.appendChild(card);
+  });
+
+  conceptsArea.style.display = 'block';
+  document.getElementById('btnValidate').disabled = true;
+  inputArea.style.display = 'none';
+  scrollToBottom();
+}
+
+function selectConcept(i) {
+  document.querySelectorAll('.concept-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById(`concept-${i}`).classList.add('selected');
+  selectedConceptIndex = i;
+  document.getElementById('btnValidate').disabled = false;
+  // Scroll to the validate button
+  document.getElementById('btnValidate').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function askRefinement() {
+  conceptsArea.style.display = 'none';
+  inputArea.style.display = 'block';
+  addMessage('ai', 'Tell me what you\'d like different — more local businesses, lower startup costs, something online, less physical demand? I\'ll generate new options.');
+}
+
+// ─── Validation ────────────────────────────────────────────────────────────────
+async function validateConcept() {
+  if (selectedConceptIndex === null) return;
+  const concept = concepts[selectedConceptIndex];
+
+  stage = 'validation';
+  conceptsArea.style.display = 'none';
+  validationArea.style.display = 'block';
+  setProgress('Validating concept...', 70, 'Stage 2');
+
+  const div = document.createElement('div');
+  div.className = 'message ai';
+  div.innerHTML = `<div class="message-avatar">🤖</div><div class="message-bubble"><p>Running adversarial feasibility analysis on <strong>${escapeHtml(concept.name)}</strong>...</p><div class="thinking-dots"><span></span><span></span><span></span></div></div>`;
+  conversationEl.appendChild(div);
+  scrollToBottom();
+
+  try {
+    const res = await fetch('/api/validate', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        concept,
+        veteran_profile: collected
+      })
+    });
+    const data = await res.json();
+
+    if (!data.success) throw new Error(data.error);
+
+    validationResult = data.validation || {};
+    const reply = data.reply;
+
+    // Show verdict panel
+    const v = validationResult;
+    let verdictClass = 'needs-work';
+    let verdictIcon = '⚠️';
+    if (v && v.verdict) {
+      if (v.verdict === 'VIABLE') { verdictClass = 'viable'; verdictIcon = '✅'; }
+      else if (v.verdict === 'UNLIKELY') { verdictClass = 'unlikely'; verdictIcon = '❌'; }
+    }
+
+    let html = `
+      <div class="stage-divider">
+        <div class="stage-divider-line"></div>
+        <div class="stage-divider-badge">Stage 2: Feasibility Analysis</div>
+        <div class="stage-divider-line"></div>
+      </div>
+      <div class="validation-panel">
+        ${v ? `
+        <div class="verdict-banner ${verdictClass}">
+          <div class="verdict-icon">${verdictIcon}</div>
+          <div class="verdict-text">
+            <h3>${v.verdict === 'VIABLE' ? 'Viable — Proceed' : v.verdict === 'UNLIKELY' ? 'Unlikely — Rethink' : 'Needs Work — Fix These First'}</h3>
+            <p>${v.confidence || ''} confidence · ${reply.replace(/<[^>]+>/g, '').slice(0, 120)}...</p>
+          </div>
+        </div>
+
+        ${v.strengths && v.strengths.length ? `
+        <div class="analysis-section">
+          <h4>✅ Strengths</h4>
+          <ul class="strength-list">
+            ${v.strengths.map(s => `<li>✓ ${escapeHtml(s)}</li>`).join('')}
+          </ul>
+        </div>` : ''}
+
+        ${v.weaknesses && v.weaknesses.length ? `
+        <div class="analysis-section">
+          <h4>⚠️ Areas to Strengthen</h4>
+          <ul class="weakness-list">
+            ${v.weaknesses.map(w => `<li>⚠ ${escapeHtml(w)}</li>`).join('')}
+          </ul>
+        </div>` : ''}
+
+        ${v.rejection_risks && v.rejection_risks.length ? `
+        <div class="analysis-section">
+          <h4>🚫 VR&E Rejection Risks & Mitigations</h4>
+          ${v.rejection_risks.map(r => `
+            <div class="risk-item">
+              <h5>⚠️ ${escapeHtml(r.risk)}</h5>
+              <p>${escapeHtml(r.mitigation)}</p>
+            </div>
+          `).join('')}
+        </div>` : ''}
+
+        ${v.recommended_adjustments && v.recommended_adjustments.length ? `
+        <div class="analysis-section">
+          <h4>🔧 Recommended Adjustments</h4>
+          <ul style="padding-left:20px">
+            ${v.recommended_adjustments.map(a => `<li style="font-size:14px;margin-bottom:6px">${escapeHtml(a)}</li>`).join('')}
+          </ul>
+        </div>` : ''}
+        ` : `<p>${escapeHtml(reply)}</p>`}
+
+        <div class="concept-action" style="margin-top:20px">
+          <button class="btn-back" onclick="backToConcepts()">← Back to concepts</button>
+          <button class="btn-validate" onclick="goToPlan()">📋 Build My Full Plan</button>
+        </div>
+      </div>
+    `;
+    validationArea.innerHTML = html;
+
+  } catch(e) {
+    validationArea.innerHTML = `
+      <div class="error-banner">Error: ${escapeHtml(e.message)}</div>
+      <div class="concept-action">
+        <button class="btn-back" onclick="backToConcepts()">← Back to concepts</button>
+        <button class="btn-validate" onclick="goToPlan()">📋 Build My Full Plan Anyway</button>
+      </div>
+    `;
+  }
+
+  scrollToBottom();
+}
+
+function backToConcepts() {
+  validationArea.style.display = 'none';
+  conceptsArea.style.display = 'block';
+  setProgress('Pick a concept', 65, 'Stage 1');
+}
+
+// ─── Plan Generation ──────────────────────────────────────────────────────────
+function goToPlan() {
+  stage = 'plan';
+  validationArea.style.display = 'none';
+  planArea.style.display = 'block';
+  upgradeBanner.style.display = 'block';
+  setProgress('Building your plan...', 90, 'Stage 3');
+  planArea.innerHTML = `
+    <div class="message ai">
+      <div class="message-avatar">🤖</div>
+      <div class="message-bubble">
+        <p>Generating your complete VR&E business plan...</p>
+        <div class="thinking-dots"><span></span><span></span><span></span></div>
+      </div>
+    </div>
+  `;
+  scrollToBottom();
+}
+
+async function generatePlan() {
+  upgradeBanner.style.display = 'none';
+  const concept = concepts[selectedConceptIndex];
+  const validationNotes = validationResult
+    ? `Key risks to address: ${(validationResult.rejection_risks || []).map(r => r.mitigation).join(' ')}`
+    : '';
+
+  try {
+    const res = await fetch('/api/generate-plan', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        veteran_profile: collected,
+        concept,
+        validation_notes: validationNotes
+      })
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error);
+
+    planText = data.plan;
+    renderPlan(planText);
+  } catch(e) {
+    planArea.innerHTML += `<div class="error-banner">Plan generation failed: ${escapeHtml(e.message)}</div>`;
+  }
+}
+
+function renderPlan(text) {
+  // Simple markdown-like rendering
+  let html = text
+    .replace(/^### (.+)$/gm, '<h3 style="font-size:14px;font-weight:700;color:var(--navy);margin:20px 0 8px;border-bottom:1px solid var(--border);padding-bottom:4px">$1</h3>')
+    .replace(/^## (.+)$/gm, '<h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:24px 0 10px">$1</h2>')
+    .replace(/^# (.+)$/gm, '<h1 style="font-size:22px;font-weight:700;color:var(--navy);margin-bottom:12px">$1</h1>')
+    .replace(/\n\n/g, '</p><p style="margin-bottom:10px">')
+    .replace(/\n/g, '<br>');
+
+  planArea.innerHTML = `
+    <div class="stage-divider">
+      <div class="stage-divider-line"></div>
+      <div class="stage-divider-badge">Your VR&E Business Plan</div>
+      <div class="stage-divider-line"></div>
+    </div>
+    <div class="plan-panel">
+      <div style="margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+        <div>
+          <h2 style="font-family:'Merriweather',serif;font-size:22px;color:var(--navy);margin-bottom:4px">${escapeHtml(concepts[selectedConceptIndex].name)}</h2>
+          <p style="font-size:13px;color:var(--muted)">Generated by VetPath · ${new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'})}</p>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn-download" onclick="downloadPlan()">📥 Download Plan</button>
+          <button class="btn-upgrade">🚀 Get Full Submission Package</button>
+        </div>
+      </div>
+      <div class="plan-content">${html}</div>
+    </div>
+  `;
+  setProgress('Plan complete!', 100, '✓ Done');
+  scrollToBottom();
+}
+
+function downloadPlan() {
+  if (!planText) return;
+  const blob = new Blob([planText], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'VetPath-Business-Plan.txt';
+  a.click();
+}
+
+// ─── Send Message ───────────────────────────────────────────────────────────────
+async function sendMessage() {
+  if (isGenerating) return;
+  const text = userInput.value.trim();
+  if (!text) return;
+
+  userInput.value = '';
+  userInput.style.height = 'auto';
+  addMessage('user', text);
+  isGenerating = true;
+
+  addThinkingMessage();
+
+  try {
+    const res = await fetch('/api/discovery/chat', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ messages, collected })
+    });
+    const data = await res.json();
+
+    removeThinkingMessage();
+
+    if (!data.success) {
+      addMessage('ai', `Error: ${data.error}`);
+      return;
+    }
+
+    // Parse the reply text (remove any JSON blocks for display)
+    let displayReply = data.reply;
+    if (data.concepts) {
+      // Strip the JSON from display
+      displayReply = displayReply.replace(/\{[^{}]*"__type"\s*:\s*"concepts"[^{}]*\}[^{}]*\}/gs, '').trim();
+    }
+
+    if (displayReply) {
+      addMessage('ai', displayReply);
+    }
+
+    // Update collected data
+    if (data.collected) {
+      collected = { ...collected, ...data.collected };
+      updateProgress();
+    }
+
+    // If concepts were returned, show them
+    if (data.concepts && data.concepts.length > 0) {
+      stage = 'concepts';
+      conceptsArea.style.display = 'block';
+      inputArea.style.display = 'none';
+      renderConcepts(data.concepts);
+    }
+
+  } catch(e) {
+    removeThinkingMessage();
+    addMessage('ai', `Error: ${e.message}. Please try again.`);
+  }
+
+  isGenerating = false;
+  userInput.focus();
+}
+
+function updateProgress() {
+  const keys = Object.keys(collected);
+  if (keys.length === 0) setProgress('Discovery — Question 1', 10, 'Stage 1');
+  else if (keys.length === 1) setProgress('Discovery — Question 2', 20, 'Stage 1');
+  else if (keys.length === 2) setProgress('Discovery — Question 3', 30, 'Stage 1');
+  else if (keys.length === 3) setProgress('Discovery — Question 4', 40, 'Stage 1');
+  else if (keys.length === 4) setProgress('Discovery — Question 5', 50, 'Stage 1');
+  else if (keys.length === 5) setProgress('Discovery — Question 6', 60, 'Stage 1');
+  else if (keys.length >= 6) setProgress('Discovery — Almost done', 65, 'Stage 1');
+}
+
+// ─── Input Auto-resize ─────────────────────────────────────────────────────────
+userInput.addEventListener('input', function () {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 160) + 'px';
+});
+
+// ─── Enter to Send ──────────────────────────────────────────────────────────────
+function handleKeyDown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+setProgress('Discovery — Question 1', 10, 'Stage 1');
+// Welcome message is rendered server-side via Jinja in production,
+// for static deploy we start fresh:
+conversationEl.innerHTML = `
+  <div class="message ai">
+    <div class="message-avatar">🤖</div>
+    <div class="message-bubble">
+      <p>👋 Welcome to VetPath. I'm your VR&E self-employment advisor. Let's find the right business for you.</p>
+      <p style="margin-top:10px">I'll ask you a few questions about yourself — your service-connected condition, where you live, your budget, and what kind of work you want to do. Take your time with your answers.</p>
+      <p style="margin-top:10px"><strong>Let's start:</strong> What is your primary service-connected condition, and how does it affect the type of work you can do?</p>
+    </div>
+  </div>
+`;
+inputArea.style.display = 'block';
+userInput.focus();
+</script>
+
+</body>
+</html>
