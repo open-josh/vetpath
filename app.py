@@ -88,6 +88,12 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/journey")
+def journey():
+    """The guided VetPath journey — Discovery, Validation, Plan."""
+    return render_template("journey.html")
+
+
 @app.route("/api/discovery/chat", methods=["POST"])
 def api_discovery_chat():
     """Conversational discovery — one question at a time."""
