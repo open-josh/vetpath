@@ -6,6 +6,7 @@ import os
 import json
 import requests
 from flask import Flask, render_template, request, jsonify, session
+from datetime import datetime as dt
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -292,7 +293,7 @@ def api_capture():
         except Exception:
             leads = []
 
-    leads.append({"email": email, "stage": stage, "ts": __import__("datetime").datetime.now().isoformat()})
+    leads.append({"email": email, "stage": stage, "ts": dt.now().isoformat()})
     with open(leads_file, "w") as f:
         json.dump(leads, f)
 
